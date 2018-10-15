@@ -148,13 +148,17 @@ public class SpringBootUserController {
 ### 2.3 在实体类中使用注解对 JSON 响应数据进行控制
 
 1. 隐藏属性字段
+
 类注解：`@JsonIgnoreProperties({ "propName1", "propName2", ... })`
+
 属性注解：`@JsonIgnore`
 
 2. 隐藏值为空或 `null` 的属性字段
+
 类注解 & 属性注解：`@JsonInclude(Include.NON_EMPTY)`, `@JsonInclude(Include.NON_NULL)`
 
 3. 格式化 Date 类型的属性字段
+
 属性注解：`@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", locale = "zh", timezone = "UTC")`
 
 ## 3. Spring Boot 热部署
