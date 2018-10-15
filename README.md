@@ -23,7 +23,7 @@
      - [4.1.4 在 Controller 中注入](#414-在-controller-中注入)
   - [4.2 Spring Boot 资源文件配置 Server 及 Tomcat](#42-spring-boot-资源文件配置-server-及-tomcat)
      - [4.2.1 Server 服务端相关配置](#421-server-服务端相关配置)
-     - [4.2.2 Server - tomcat 相关常用配置](#422-server--tomcat-相关常用配置)
+     - [4.2.2 Server Tomcat 相关常用配置](#422-server-tomcat-相关常用配置)
 
 - [5. Spring Boot 整合模板引擎](#5-spring-boot-整合模板引擎)
   - [5.1 Spring Boot 整合 FreeMarker](#51-spring-boot-整合-freemarker)
@@ -163,19 +163,17 @@ public class SpringBootUserController {
 
 ```xml
 <!-- 热部署 -->
-<!-- devtools 可以实现页面热部署（即页面修改后会立即生效，
-	这个可以直接在 application.properties 文件中配置 spring.thymeleaf.cache=false 来实现） -->
+<!-- devtools 可以实现页面热部署（即页面修改后会立即生效，这个可以直接在 application.properties 文件中配置 spring.thymeleaf.cache=false 来实现） -->
 <!-- 实现类文件热部署（类文件修改后不会立即生效），实现对属性文件的热部署 -->
-<!-- 即 devtools 会监听 classpath 下的文件变动，并且会立即重启应用（发生在保存时），
-	注意：因为其采用的虚拟机机制，该项重启是很快的 -->
+<!-- 即 devtools 会监听 classpath 下的文件变动，并且会立即重启应用（发生在保存时），注意：因为其采用的虚拟机机制，该项重启是很快的 -->
 <!-- (1) base classloader (Base 类加载)：加载不可变的 Class，例如第三方提供的 jar 包 -->
 <!-- (2) restart classloader (Restart 类加载器)：加载正在开发的 Class -->
 <!-- 为什么重启很快，因为重启的时候只是加载了正在开发的 Class，没有重新加载第三方的 jar 包 -->
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-devtools</artifactId>
-	<!-- optional=true, 依赖不会传递, 该项目依赖 devtools, 之后依赖该项目的项目如果想要使用 devtools, 需要重新引入 -->
-	<optional>true</optional>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <!-- optional=true, 依赖不会传递, 该项目依赖 devtools, 之后依赖该项目的项目如果想要使用 devtools, 需要重新引入 -->
+    <optional>true</optional>
 </dependency>
 ```
 
@@ -202,9 +200,9 @@ spring.devtools.restart.additional-paths=src/main/java
 ```xml
 <!-- 资源文件属性配置 -->
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-configuration-processor</artifactId>
-	<optional>true</optional>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
 </dependency>
 ```
 
@@ -264,7 +262,7 @@ private Resource resource;
 #server.address=192.168.0.100
 ```
 
-#### 4.2.2 Server - tomcat 相关常用配置
+#### 4.2.2 Server Tomcat 相关常用配置
 
 ```properties
 ###############################################################
@@ -296,8 +294,8 @@ private Resource resource;
 ```xml
 <!-- 引入 FreeMarker 模板依赖 -->
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-freemarker</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-freemarker</artifactId>
 </dependency>
 ```
 
@@ -367,8 +365,8 @@ public class FreeMarkerController {
 ```xml
 <!-- 引入 Thymeleaf 模板依赖 -->
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
 ```
 
@@ -583,8 +581,8 @@ public class HapiccExceptionHandler {
 <!-- Spring Boot 整合 MyBatis -->
 <!-- MySQL Connector & Druid -->
 <dependency>
-	<groupId>mysql</groupId>
-	<artifactId>mysql-connector-java</artifactId>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
 </dependency>
 <dependency>
     <groupId>com.alibaba</groupId>
@@ -598,27 +596,27 @@ public class HapiccExceptionHandler {
 </dependency>
 <!-- MyBatis & Mapper & PageHelper，参考：https://github.com/abel533/MyBatis-Spring-Boot -->
 <dependency>
-	<groupId>org.mybatis.spring.boot</groupId>
-	<artifactId>mybatis-spring-boot-starter</artifactId>
-	<version>1.3.1</version>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>1.3.1</version>
 </dependency>
 <dependency>
-	<groupId>tk.mybatis</groupId>
-	<artifactId>mapper-spring-boot-starter</artifactId>
-	<version>1.2.4</version>
+    <groupId>tk.mybatis</groupId>
+    <artifactId>mapper-spring-boot-starter</artifactId>
+    <version>1.2.4</version>
 </dependency>
 <dependency>
-	<groupId>com.github.pagehelper</groupId>
-	<artifactId>pagehelper-spring-boot-starter</artifactId>
-	<version>1.2.3</version>
+    <groupId>com.github.pagehelper</groupId>
+    <artifactId>pagehelper-spring-boot-starter</artifactId>
+    <version>1.2.3</version>
 </dependency>
 <!-- MyBatis Generator -->
 <dependency>
-	<groupId>org.mybatis.generator</groupId>
-	<artifactId>mybatis-generator-core</artifactId>
-	<version>1.3.7</version>
-	<scope>compile</scope>
-	<optional>true</optional>
+    <groupId>org.mybatis.generator</groupId>
+    <artifactId>mybatis-generator-core</artifactId>
+    <version>1.3.7</version>
+    <scope>compile</scope>
+    <optional>true</optional>
 </dependency>
 ```
 
@@ -736,46 +734,40 @@ CREATE TABLE `sys_user` (
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-	<!-- 引入配置文件 -->
-	<properties resource="application.properties" />
+    <!-- 引入配置文件 -->
+    <properties resource="application.properties" />
 
-	<context id="MysqlContext" targetRuntime="MyBatis3Simple"
-		defaultModelType="flat">
+    <context id="MysqlContext" targetRuntime="MyBatis3Simple" defaultModelType="flat">
 
-		<property name="beginningDelimiter" value="`" />
-		<property name="endingDelimiter" value="`" />
+        <property name="beginningDelimiter" value="`" />
+        <property name="endingDelimiter" value="`" />
 
-		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-			<property name="mappers"
-				value="com.hapicc.utils.generator.MyMapper" />
-		</plugin>
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.hapicc.utils.generator.MyMapper" />
+        </plugin>
 
-		<jdbcConnection
-			driverClass="${spring.datasource.driver-class-name}"
-			connectionURL="${spring.datasource.url}"
-			userId="${spring.datasource.username}"
-			password="${spring.datasource.password}">
-		</jdbcConnection>
+        <jdbcConnection
+            driverClass="${spring.datasource.driver-class-name}"
+            connectionURL="${spring.datasource.url}"
+            userId="${spring.datasource.username}"
+            password="${spring.datasource.password}">
+        </jdbcConnection>
 
-		<!-- 配置生成的 pojo 所在目录 -->
-		<javaModelGenerator targetPackage="com.hapicc.pojo"
-			targetProject="src/main/java" />
+        <!-- 配置生成的 pojo 所在目录 -->
+        <javaModelGenerator targetPackage="com.hapicc.pojo" targetProject="src/main/java" />
 
-		<!-- 配置生成的 mapper 所在目录 -->
-		<sqlMapGenerator targetPackage="mappers"
-			targetProject="src/main/resources" />
+        <!-- 配置生成的 mapper 所在目录 -->
+        <sqlMapGenerator targetPackage="mappers" targetProject="src/main/resources" />
 
-		<!-- 配置生成的 mapper 对应的 java 映射所在目录 -->
-		<javaClientGenerator
-			targetPackage="com.hapicc.mappers" targetProject="src/main/java"
-			type="XMLMAPPER" />
+        <!-- 配置生成的 mapper 对应的 java 映射所在目录 -->
+        <javaClientGenerator targetPackage="com.hapicc.mappers" targetProject="src/main/java" type="XMLMAPPER" />
 
-		<!-- 配置需要自动生成的数据库表，tableName 支持 '%'，表示全部生成 -->
-		<!-- 自动生成的实体类默认使用 tableName 的驼峰形式作为类名，也可以通过 domainObjectName 指定 -->
-		<!-- 关于 table 元素的详细使用请参考：http://mbg.cndocs.ml/configreference/table.html -->
-		<table tableName="sys_user"></table>
+        <!-- 配置需要自动生成的数据库表，tableName 支持 '%'，表示全部生成 -->
+        <!-- 自动生成的实体类默认使用 tableName 的驼峰形式作为类名，也可以通过 domainObjectName 指定 -->
+        <!-- 关于 table 元素的详细使用请参考：http://mbg.cndocs.ml/configreference/table.html -->
+        <table tableName="sys_user"></table>
 
-	</context>
+    </context>
 </generatorConfiguration>
 ```
 
@@ -824,26 +816,26 @@ public class GeneratorTrigger {
 <!-- MyBatis Generator -->
 <!-- 运行 `mvn mybatis-generator:generate` 命令，效果与运行 GeneratorTrigger 类相同 -->
 <plugin>
-	<groupId>org.mybatis.generator</groupId>
-	<artifactId>mybatis-generator-maven-plugin</artifactId>
-	<version>1.3.7</version>
-	<configuration>
-		<configurationFile>${basedir}/src/main/resources/gen/generatorConfig.xml</configurationFile>
-		<overwrite>true</overwrite>
-		<verbose>true</verbose>
-	</configuration>
-	<dependencies>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>tk.mybatis</groupId>
-			<artifactId>mapper</artifactId>
-			<version>3.5.3</version>
-		</dependency>
-	</dependencies>
+    <groupId>org.mybatis.generator</groupId>
+    <artifactId>mybatis-generator-maven-plugin</artifactId>
+    <version>1.3.7</version>
+    <configuration>
+        <configurationFile>${basedir}/src/main/resources/gen/generatorConfig.xml</configurationFile>
+        <overwrite>true</overwrite>
+        <verbose>true</verbose>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+    </dependencies>
 </plugin>
 ```
 
@@ -944,16 +936,16 @@ public interface SysUserMapperCustom extends MyMapper<SysUser> {
         <result column="last_updated" jdbcType="TIMESTAMP" property="lastUpdated" />
     </resultMap>
 
-	<!-- 创建 root 用户 -->
-	<select id="selectSimpleInfoById"
-		parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
-		    id, name, login_name, gender
-		from
-		    sys_user
-		where
-		    id = #{id, jdbcType=VARCHAR}
-	</select>
+    <!-- 创建 root 用户 -->
+    <select id="selectSimpleInfoById"
+        parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+            id, name, login_name, gender
+        from
+            sys_user
+        where
+            id = #{id, jdbcType=VARCHAR}
+    </select>
 
 </mapper>
 ```
@@ -1011,12 +1003,12 @@ Spring Transaction Propagation：
 ```xml
 <!-- 引入 Redis 依赖 -->
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-data-redis</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 <dependency>
-	<groupId>redis.clients</groupId>
-	<artifactId>jedis</artifactId>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
 </dependency>
 ```
 
@@ -1298,8 +1290,8 @@ IDEA 安装 Lombok 插件：
 ```xml
 <!-- 引入 Lombok 依赖 -->
 <dependency>
-	<groupId>org.projectlombok</groupId>
-	<artifactId>lombok</artifactId>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
 </dependency>
 ```
 
