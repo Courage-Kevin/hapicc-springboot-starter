@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hapicc.mapper.SysUserMapperCustom">
+
+    <resultMap type="com.hapicc.pojo.SysUser" id="BaseResultMap">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="img" jdbcType="VARCHAR" property="img" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="birthday" jdbcType="DATE" property="birthday" />
+        <result column="gender" jdbcType="TINYINT" property="gender" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="phone_verified" jdbcType="BIT" property="phoneVerified" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="email_verified" jdbcType="BIT" property="emailVerified" />
+        <result column="date_created" jdbcType="TIMESTAMP" property="dateCreated" />
+        <result column="last_updated" jdbcType="TIMESTAMP" property="lastUpdated" />
+    </resultMap>
+
+	<!-- 创建 root 用户 -->
+	<select id="selectSimpleInfoById"
+		parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		    id, name, login_name, gender
+		from
+		    sys_user
+		where
+		    id = #{id, jdbcType=VARCHAR}
+	</select>
+
+</mapper>
