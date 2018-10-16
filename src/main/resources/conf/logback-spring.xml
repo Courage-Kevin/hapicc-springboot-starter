@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!-- 引入 Spring Boot 官方默认配置 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 引入 application.properties 配置文件中的属性并作为日志参数 -->
+    <springProperty scope="context" name="env" source="spring.profiles.active"/>
+    <springProperty scope="context" name="service" source="spring.application.name"/>
+
+    <!-- 设置变量 -->
+    <property name="logfile" value="/opt/log/stash/${service}/${service}"/>​
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logfile}.log</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdc>true</includeMdc>
+            <!-- 在日志中添加自定义参数，此处仅做演示 -->
+            <customFields>{ "smile": "😄" }</customFields>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logfile}-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <maxFileSize>300MB</maxFileSize>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <queueSize>524288</queueSize>
+        <discardingThreshold>32768</discardingThreshold>
+    </appender>
+
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC"/>
+        </root>
+        <!-- 指定某一个包或者某一个类的 level 和 appender -->
+        <!-- additivity：是否向上级 logger 传递打印信息 -->
+        <!-- 不指定 appender 则此 logger 不打印信息 -->
+        <logger name="com.hapicc.mappers" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+
+    <!--<springProfile name="test, valid, prod">-->
+    <springProfile name="!dev">
+        <root level="INFO">
+            <appender-ref ref="ASYNC"/>
+        </root>
+    </springProfile>
+
+</configuration>

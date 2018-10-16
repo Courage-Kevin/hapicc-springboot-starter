@@ -1,23 +1,22 @@
 package com.hapicc.services.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.CaseFormat;
 import com.hapicc.mappers.SysUserMapper;
 import com.hapicc.mappers.SysUserMapperCustom;
 import com.hapicc.pojo.JqGridResult;
 import com.hapicc.pojo.SysUser;
 import com.hapicc.services.UserService;
-
+import com.hapicc.utils.common.ReqUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -54,28 +53,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public JqGridResult list(SysUser user, Integer page, Integer rows, String sidx, String sord, boolean needTotal)
-            throws Exception {
+    public JqGridResult list(Map<String, String> params) throws Exception {
 
-        PageHelper.startPage(page != null ? page : 1, rows != null ? rows : 10, needTotal);
+        Integer page = ReqUtils.getPage(params);
+        Integer rows = ReqUtils.getRows(params);
+        String sidx = ReqUtils.getSidx(params, false);
+        String sord = ReqUtils.getSord(params);
+        boolean needTotal = params != null && "true".equals(params.get("needTotal"));
+        String q = params != null ? params.get("q") : null;
+
+        PageHelper.startPage(page, rows, needTotal);
 
         Example example = new Example(SysUser.class);
         Example.Criteria criteria = example.createCriteria();
 
-        if (!StringUtils.isEmpty(user.getName())) {
-            criteria.orLike("name", "%" + user.getName() + "%");
+        if (!StringUtils.isEmpty(q)) {
+            criteria.orLike("name", "%" + q + "%");
+            criteria.orLike("loginName", "%" + q + "%");
         }
 
-        if (!StringUtils.isEmpty(user.getLoginName())) {
-            criteria.orLike("loginName", "%" + user.getLoginName() + "%");
-        }
-
-        String validSidx = "date_created";
-        if (!StringUtils.isEmpty(sidx)) {
-            validSidx = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, sidx);
-        }
-
-        example.setOrderByClause(validSidx + " " + (sord != null ? sord : "asc"));
+        example.setOrderByClause(sidx + " " + (sord != null ? sord : "asc"));
 
         List<SysUser> userList = userMapper.selectByExample(example);
 

@@ -13,8 +13,8 @@ import com.hapicc.pojo.User;
 @RequestMapping("/springMVC")
 public class SpringMVCUserController {
 
-    @RequestMapping("/getUser")
     @ResponseBody
+    @RequestMapping("/getUser")
     public User getUser() {
         User user = new User();
         user.setName("vveicc");
@@ -25,8 +25,8 @@ public class SpringMVCUserController {
         return user;
     }
 
-    @RequestMapping("/getUserJson")
     @ResponseBody
+    @RequestMapping("/getUserJson")
     public HapiccJSONResult getUserJson() {
         User user = new User();
         user.setName("vveicc");

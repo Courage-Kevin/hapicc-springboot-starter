@@ -111,13 +111,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>26.0-jre</version>
-        </dependency>
-
         <!-- 引入 Redis 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -132,6 +125,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- 引入 logstash 依赖 -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>5.2</version>
         </dependency>
     </dependencies>
 

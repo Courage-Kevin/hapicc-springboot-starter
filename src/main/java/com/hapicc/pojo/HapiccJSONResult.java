@@ -2,13 +2,19 @@ package com.hapicc.pojo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 自定义响应数据结构 1. 200：表示成功 2. 500：表示错误，错误信息在 msg 字段中 3. 501：bean 验证错误，不管多少个错误都以
- * map 形式返回 4. 502：拦截器拦截到用户 token 非法 5. 555：异常抛出信息
+ * 自定义响应数据结构
+ * 1. 200：表示成功
+ * 2. 500：表示错误，错误信息在 msg 字段中
+ * 3. 501：bean 验证错误，不管多少个错误都以 map 形式返回
+ * 4. 502：拦截器拦截到用户 token 非法
+ * 5. 555：异常抛出信息
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HapiccJSONResult {
 
     // 定义 jackson 对象

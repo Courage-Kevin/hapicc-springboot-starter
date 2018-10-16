@@ -3,6 +3,8 @@ package com.hapicc.controllers.mybatis;
 import java.util.Date;
 import java.util.Map;
 
+import com.hapicc.utils.common.JsonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import com.hapicc.pojo.JqGridResult;
 import com.hapicc.pojo.SysUser;
 import com.hapicc.services.UserService;
 
+@Slf4j
 @RestController
 @RequestMapping("mybatis")
 public class MyBatisCRUDController {
@@ -50,7 +53,7 @@ public class MyBatisCRUDController {
                 return HapiccJSONResult.build(400, "Failed to create!", null);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Error occurred when save user: " + JsonUtils.obj2Json(user), e);
             return HapiccJSONResult.errorException(e.getMessage());
         }
     }
@@ -104,24 +107,11 @@ public class MyBatisCRUDController {
 
     @RequestMapping(value = "user", method = { RequestMethod.GET })
     public HapiccJSONResult list(@RequestParam Map<String, String> params) {
-
         try {
-            Integer page = Integer.valueOf(params.get("page"));
-            Integer rows = Integer.valueOf(params.get("rows"));
-            boolean needTotal = "true".equals(params.get("needTotal"));
-
-            SysUser user = new SysUser();
-
-            if (params.get("q") != null) {
-                user.setName(params.get("q"));
-                user.setLoginName(params.get("q"));
-            }
-
-            JqGridResult ret = userService.list(user, page, rows, params.get("sidx"), params.get("sord"), needTotal);
-
+            JqGridResult ret = userService.list(params);
             return HapiccJSONResult.ok(ret);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Error occurred when list user with params: " + JsonUtils.obj2Json(params), e);
             return HapiccJSONResult.build(400, "Invalid parameters!", null);
         }
     }

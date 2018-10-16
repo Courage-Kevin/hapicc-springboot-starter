@@ -23,8 +23,8 @@ public class ErrorController {
         return "thymeleaf/ajaxerror";
     }
 
-    @RequestMapping("getAjaxerror")
     @ResponseBody
+    @RequestMapping("getAjaxerror")
     public HapiccJSONResult getAjaxerror() {
 
         System.out.println(1 / 0);

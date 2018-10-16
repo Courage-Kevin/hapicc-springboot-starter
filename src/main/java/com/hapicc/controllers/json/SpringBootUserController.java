@@ -13,8 +13,8 @@ import com.hapicc.pojo.User;
 @RequestMapping("/springBoot")
 public class SpringBootUserController {
 
-    @RequestMapping("/getUser")
 //	@ResponseBody
+    @RequestMapping("/getUser")
     public User getUser() {
         User user = new User();
         user.setName("vveicc");
@@ -25,8 +25,8 @@ public class SpringBootUserController {
         return user;
     }
 
-    @RequestMapping("/getUserJson")
 //	@ResponseBody
+    @RequestMapping("/getUserJson")
     public HapiccJSONResult getUserJson() {
         User user = new User();
         user.setName("vveicc");

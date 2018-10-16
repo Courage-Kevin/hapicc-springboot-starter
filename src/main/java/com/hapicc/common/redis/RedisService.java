@@ -53,7 +53,7 @@ public class RedisService {
 
     /**
      * Delete all keys matching the given pattern.
-     * 
+     *
      * @param pattern must not be null.
      * @return The number of keys that were removed.
      */

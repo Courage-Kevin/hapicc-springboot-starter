@@ -3,6 +3,8 @@ package com.hapicc.services;
 import com.hapicc.pojo.JqGridResult;
 import com.hapicc.pojo.SysUser;
 
+import java.util.Map;
+
 public interface UserService {
 
     int save(SysUser user) throws Exception;
@@ -13,8 +15,7 @@ public interface UserService {
 
     SysUser get(String userId);
 
-    JqGridResult list(SysUser user, Integer page, Integer rows, String sidx, String sord, boolean needTotal)
-            throws Exception;
+    JqGridResult list(Map<String, String> params) throws Exception;
 
     SysUser getUserSimpleInfo(String userId);
 

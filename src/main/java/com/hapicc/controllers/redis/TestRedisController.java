@@ -1,26 +1,19 @@
 package com.hapicc.controllers.redis;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
+import com.hapicc.common.redis.RedisService;
+import com.hapicc.pojo.HapiccJSONResult;
+import com.hapicc.pojo.User;
+import com.hapicc.utils.common.JsonUtils;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.hapicc.common.redis.RedisService;
-import com.hapicc.pojo.HapiccJSONResult;
-import com.hapicc.pojo.User;
-import com.hapicc.utils.common.JsonUtils;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("redis")
@@ -93,19 +86,15 @@ public class TestRedisController {
 
         Map<String, Object> result = new HashMap<>();
 
-        redisService.withRedis(new Consumer<Jedis>() {
-
-            @Override
-            public void accept(Jedis jedis) {
-                if (jedis.exists(key)) {
-                    result.put("value", jedis.get(key));
-                    result.put("expire", jedis.ttl(key));
-                } else {
-                    jedis.set(key, value);
-                    jedis.expire(key, expire);
-                    result.put("value", value);
-                    result.put("expire", expire);
-                }
+        redisService.withRedis(jedis -> {
+            if (jedis.exists(key)) {
+                result.put("value", jedis.get(key));
+                result.put("expire", jedis.ttl(key));
+            } else {
+                jedis.set(key, value);
+                jedis.expire(key, expire);
+                result.put("value", value);
+                result.put("expire", expire);
             }
         });
 
