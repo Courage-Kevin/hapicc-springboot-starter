@@ -1,135 +1,137 @@
 <!DOCTYPE html>
-<html>
+<!--suppress ALL -->
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title></title>
-    
+
     <!-- 引入 js 文件 -->
     <!-- <script th:src="@{/static/js/label.js}"></script> -->
-    
+
     <style type="text/css">
         table {
             border: 1px solid #A6A6A6;
             border-collapse: collapse;
         }
+
         table td {
             border: 1px solid #A6A6A6;
         }
     </style>
 </head>
 <body>
-    
-    <div>
-        姓名：<input th:id="${user.name}" th:name="${user.name}" th:value="${user.name}">
-        <br>
-        年龄：<input th:value="${user.age}">
-        <br>
-        无格式生日：<input th:value="${user.birthday}" size="36">
-        <br>
-        有格式生日：<input th:value="${#dates.format(user.birthday, 'yyyy-MM-dd')}" size="36">
-        <br>
-    </div>
-    
+
+<div>
+    姓名：<input th:id="${user.name}" th:name="${user.name}" th:value="${user.name}">
     <br>
-    
-    <div th:object="${user}">
-        姓名：<input th:id="*{name}" th:name="*{name}" th:value="*{name}">
-        <br>
-        年龄：<input th:value="*{age}">
-        <br>
-        无格式生日：<input th:value="*{birthday}" size="36">
-        <br>
-        有格式生日：<input th:value="*{#dates.format(birthday, 'yyyy-MM-dd')}" size="36">
-        <br>
-    </div>
-    
+    年龄：<input th:value="${user.age}">
     <br>
-    
-    th:text 与 th:utext 标签的区别：
+    无格式生日：<input th:value="${user.birthday}" size="36">
     <br>
-    th:text 标签：<span th:text="${user.desc}">text</span>
+    有格式生日：<input th:value="${#dates.format(user.birthday, 'yyyy-MM-dd')}" size="36">
     <br>
-    th:utext 标签：<span th:utext="${user.desc}">utext</span>
+</div>
+
+<br>
+
+<div th:object="${user}">
+    姓名：<input th:id="*{name}" th:name="*{name}" th:value="*{name}">
     <br>
-    
+    年龄：<input th:value="*{age}">
     <br>
-    
-    th:href 标签：
+    无格式生日：<input th:value="*{birthday}" size="36">
     <br>
-    <a href="https://www.apple.com" th:href="@{https://github.com/vveicc}" target="_blank">点击跳转</a>
+    有格式生日：<input th:value="*{#dates.format(birthday, 'yyyy-MM-dd')}" size="36">
     <br>
-    
+</div>
+
+<br>
+
+th:text 与 th:utext 标签的区别：
+<br>
+th:text 标签：<span th:text="${user.desc}">text</span>
+<br>
+th:utext 标签：<span th:utext="${user.desc}">utext</span>
+<br>
+
+<br>
+
+th:href 标签：
+<br>
+<a href="https://www.apple.com" th:href="@{https://github.com/vveicc}" target="_blank">点击跳转</a>
+<br>
+
+<br>
+
+form 表单：
+<br>
+<form th:action="@{/th/postform}" th:object="${user}" method="post" th:method="post">
+    <!-- (th:field="*{name}") 的效果：(id="name" name="name" value="{user.name 的值}") -->
+    姓名：<input type="text" th:field="*{name}">
     <br>
-    
-    form 表单：
+    年龄：<input type="text" th:field="*{age}">
     <br>
-    <form th:action="@{/th/postform}" th:object="${user}" method="post" th:method="post">
-        <!-- (th:field="*{name}") 的效果：(id="name" name="name" value="{user.name 的值}") -->
-        姓名：<input type="text" th:field="*{name}">
-        <br>
-        年龄：<input type="text" th:field="*{age}">
-        <br>
-        <input type="submit">
-        <br>
-    </form>
-    
+    <input type="submit">
     <br>
-    
-    th:if 标签：
-    <br>
-    <!-- ==/eq, >/gt, </lt, >=/ge, <=/le -->
-    <div th:if="${user.age} == 18">十八岁的天空</div>
-    <div th:if="${user.age} > 18">岁月渐老</div>
-    <div th:if="${user.age} < 18">青葱年华</div>
-    <div th:if="${user.age} >= 18">大于等于十八岁</div>
-    <div th:if="${user.age} <= 18">小于等于十八岁</div>
-    
-    <br>
-    
-    th:selected 标签：
-    <br>
-    请选择：
-    <select>
-        <option th:selected="${user.name eq 'xiaoming'}">小明</option>
-        <option th:selected="${user.name eq 'xiaohong'}">小红</option>
-        <option th:selected="${user.name eq 'xiaolong'}">小龙</option>
-        <option th:selected="${user.name eq 'vveicc'}">vveicc</option>
-    </select>
-    <br>
-    
-    <br>
-    
-    th:each 标签：
-    <br>
-    <table>
-        <tr>
-            <th>姓名</th>
-            <th>年龄</th>
-            <th>感慨</th>
-            <th>生日</th>
-        </tr>
-        <tr th:each="person:${userList}">
-            <td th:text="${person.name}"></td>
-            <td th:text="${person.age}"></td>
-            <td th:text="${person.age gt 18} ? 岁月渐老 : 青葱年华">18岁</td>
-            <td th:text="${#dates.format(person.birthday, 'yyyy-MM-dd')}"></td>
-        </tr>
-    </table>
-    <br>
-    
-    <br>
-    
-    th:switch 标签：
-    <br>
-    用户角色：
-    <span th:switch="${user.name}">
+</form>
+
+<br>
+
+th:if 标签：
+<br>
+<!-- ==/eq, >/gt, </lt, >=/ge, <=/le -->
+<div th:if="${user.age} == 18">十八岁的天空</div>
+<div th:if="${user.age} > 18">岁月渐老</div>
+<div th:if="${user.age} < 18">青葱年华</div>
+<div th:if="${user.age} >= 18">大于等于十八岁</div>
+<div th:if="${user.age} <= 18">小于等于十八岁</div>
+
+<br>
+
+th:selected 标签：
+<br>
+请选择：
+<select>
+    <option th:selected="${user.name eq 'xiaoming'}">小明</option>
+    <option th:selected="${user.name eq 'xiaohong'}">小红</option>
+    <option th:selected="${user.name eq 'xiaolong'}">小龙</option>
+    <option th:selected="${user.name eq 'vveicc'}">vveicc</option>
+</select>
+<br>
+
+<br>
+
+th:each 标签：
+<br>
+<table>
+    <tr>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>感慨</th>
+        <th>生日</th>
+    </tr>
+    <tr th:each="person:${userList}">
+        <td th:text="${person.name}"></td>
+        <td th:text="${person.age}"></td>
+        <td th:text="${person.age gt 18} ? 岁月渐老 : 青葱年华">18岁</td>
+        <td th:text="${#dates.format(person.birthday, 'yyyy-MM-dd')}"></td>
+    </tr>
+</table>
+<br>
+
+<br>
+
+th:switch 标签：
+<br>
+用户角色：
+<span th:switch="${user.name}">
         <i th:case="'vveicc'">vveicc</i>
-        <!-- 使用 #{roles.manager} 前需要先配置 i18n 资源文件 -->
+    <!-- 使用 #{roles.manager} 前需要先配置 i18n 资源文件 -->
         <i th:case="#{roles.manager}">普通管理员</i>
         <i th:case="#{roles.superadmin}">超级管理员</i>
         <i th:case="*">其他用户</i>
     </span>
-    <br>
-    
+<br>
+
 </body>
 </html>

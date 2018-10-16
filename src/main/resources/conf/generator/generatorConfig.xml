@@ -9,44 +9,43 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-	<!-- 引入配置文件 -->
-	<properties resource="application.properties" />
+    <!-- 引入配置文件 -->
+    <properties resource="application.properties"/>
 
-	<context id="MysqlContext" targetRuntime="MyBatis3Simple"
-		defaultModelType="flat">
+    <context id="MysqlContext" targetRuntime="MyBatis3Simple"
+             defaultModelType="flat">
 
-		<property name="beginningDelimiter" value="`" />
-		<property name="endingDelimiter" value="`" />
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
 
-		<plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-			<property name="mappers"
-				value="com.hapicc.utils.generator.MyMapper" />
-		</plugin>
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="com.hapicc.utils.generator.MyMapper"/>
+        </plugin>
 
-		<jdbcConnection
-			driverClass="${spring.datasource.driver-class-name}"
-			connectionURL="${spring.datasource.url}"
-			userId="${spring.datasource.username}"
-			password="${spring.datasource.password}">
-		</jdbcConnection>
+        <jdbcConnection
+                driverClass="${spring.datasource.driver-class-name}"
+                connectionURL="${spring.datasource.url}"
+                userId="${spring.datasource.username}"
+                password="${spring.datasource.password}">
+        </jdbcConnection>
 
-		<!-- 配置生成的 pojo 所在目录 -->
-		<javaModelGenerator targetPackage="com.hapicc.pojo"
-			targetProject="src/main/java" />
+        <!-- 配置生成的 pojo 所在目录 -->
+        <javaModelGenerator targetPackage="com.hapicc.pojo"
+                            targetProject="src/main/java"/>
 
-		<!-- 配置生成的 mapper 所在目录 -->
-		<sqlMapGenerator targetPackage="mappers"
-			targetProject="src/main/resources" />
+        <!-- 配置生成的 mapper 所在目录 -->
+        <sqlMapGenerator targetPackage="mappers"
+                         targetProject="src/main/resources"/>
 
-		<!-- 配置生成的 mapper 对应的 java 映射所在目录 -->
-		<javaClientGenerator
-			targetPackage="com.hapicc.mappers" targetProject="src/main/java"
-			type="XMLMAPPER" />
+        <!-- 配置生成的 mapper 对应的 java 映射所在目录 -->
+        <javaClientGenerator
+                targetPackage="com.hapicc.mappers" targetProject="src/main/java"
+                type="XMLMAPPER"/>
 
-		<!-- 配置需要自动生成的数据库表，tableName 支持 '%'，表示全部生成 -->
-		<!-- 自动生成的实体类默认使用 tableName 的驼峰形式作为类名，也可以通过 domainObjectName 指定 -->
-		<!-- 关于 table 元素的详细使用请参考：http://mbg.cndocs.ml/configreference/table.html -->
-		<table tableName="sys_user"></table>
+        <!-- 配置需要自动生成的数据库表，tableName 支持 '%'，表示全部生成 -->
+        <!-- 自动生成的实体类默认使用 tableName 的驼峰形式作为类名，也可以通过 domainObjectName 指定 -->
+        <!-- 关于 table 元素的详细使用请参考：http://mbg.cndocs.ml/configreference/table.html -->
+        <table tableName="sys_user"/>
 
-	</context>
+    </context>
 </generatorConfiguration>

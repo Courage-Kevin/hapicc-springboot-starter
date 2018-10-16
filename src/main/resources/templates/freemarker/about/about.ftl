@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title></title>
 </head>
 <body>
-    FreeMarker 模板引擎
-    <h1>About page</h1>
-    <hr/>
+FreeMarker 模板引擎
+<h1>About page</h1>
+<hr/>
 </body>
 </html>
