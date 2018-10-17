@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="root" id="1539764131010-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="hapicc" tableName="person"/>
+            </not>
+        </preConditions>
+
+        <createTable schemaName="hapicc" tableName="person">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="root" id="1539764131010-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="hapicc" tableName="sys_user"/>
+            </not>
+        </preConditions>
+
+        <createTable schemaName="hapicc" tableName="sys_user">
+            <column name="id" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="img" type="VARCHAR(512)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="login_name" type="VARCHAR(128)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="birthday" type="date"/>
+            <column defaultValueNumeric="0" name="gender" type="TINYINT(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="phone_verified" type="BIT(1)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="email_verified" type="BIT(1)"/>
+            <column name="date_created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="root" id="1539764131010-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <primaryKeyExists schemaName="hapicc" tableName="sys_user"/>
+            </not>
+        </preConditions>
+
+        <addPrimaryKey schemaName="hapicc" columnNames="id" constraintName="PRIMARY" tableName="sys_user"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,14 @@
+databaseChangeLog:
+
+-   preConditions:
+    -   dbms:
+            type: mysql
+    -   runningAs:
+            username: root
+
+-   include:
+        file: classpath:migration/db/liquibase/initial.xml
+-   include:
+        file: classpath:migration/db/liquibase/changelog-1.0.0.xml
+-   include:
+        file: classpath:migration/db/liquibase/changelog-1.0.1.xml

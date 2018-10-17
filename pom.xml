@@ -133,6 +133,20 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>5.2</version>
         </dependency>
+
+        <!-- 引入 Flyway 依赖 -->
+        <!-- 项目启动时自动扫描迁移脚本并执行 -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!-- 引入 Liquibase 依赖 -->
+        <!-- 项目启动时自动扫描迁移脚本并执行 -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -165,6 +179,35 @@
                         <version>3.5.3</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <!-- Flyway -->
+            <!-- 常用命令：`mvn flyway:migrate` `mvn flyway:info` -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/hapicc</url>
+                    <user>root</user>
+                    <password>root</password>
+                    <baselineOnMigrate>true</baselineOnMigrate>
+                    <baselineVersion>1.0.0</baselineVersion>
+                    <locations>
+                        <location>classpath:migration/db/flyway</location>
+                    </locations>
+                </configuration>
+            </plugin>
+
+            <!-- Liquibase -->
+            <!-- 常用命令：`mvn liquibase:update` `mvn liquibase:generateChangeLog` -->
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.5.5</version>
+                <configuration>
+                    <propertyFileWillOverride>true</propertyFileWillOverride>
+                    <propertyFile>${basedir}/src/main/resources/conf/migration/liquibase.properties</propertyFile>
+                </configuration>
             </plugin>
         </plugins>
     </build>
