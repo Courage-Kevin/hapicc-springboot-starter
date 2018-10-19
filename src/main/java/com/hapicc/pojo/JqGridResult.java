@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.github.pagehelper.PageInfo;
+import org.springframework.data.domain.Page;
 
 @JsonInclude(Include.NON_NULL)
 public class JqGridResult {
@@ -32,6 +34,27 @@ public class JqGridResult {
      * 用户自定义数据
      */
     private Object userdata;
+
+    public JqGridResult() {
+    }
+
+    public JqGridResult(Page<?> page, boolean needTotal) {
+        this.page = page.getNumber() + 1;
+        this.rows = page.getContent();
+        if (needTotal) {
+            this.total = page.getTotalPages();
+            this.records = page.getTotalElements();
+        }
+    }
+
+    public JqGridResult(PageInfo<?> pageInfo, boolean needTotal) {
+        this.page = pageInfo.getPageNum();
+        this.rows = pageInfo.getList();
+        if (needTotal) {
+            this.total = pageInfo.getPages();
+            this.records = pageInfo.getTotal();
+        }
+    }
 
     public Integer getPage() {
         return page;

@@ -44,6 +44,10 @@ public class HapiccJSONResult {
         this.setData(data);
     }
 
+    public static HapiccJSONResult build(Integer status, String msg) {
+        return new HapiccJSONResult(status, msg, null);
+    }
+
     public static HapiccJSONResult build(Integer status, String msg, Object data) {
         return new HapiccJSONResult(status, msg, data);
     }

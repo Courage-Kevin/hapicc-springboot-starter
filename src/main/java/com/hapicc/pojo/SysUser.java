@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Table(name = "sys_user")
-@JsonIgnoreProperties({ "password" })
+@JsonIgnoreProperties(value = { "password" })
 @JsonInclude(Include.NON_NULL)
 public class SysUser {
     @Id

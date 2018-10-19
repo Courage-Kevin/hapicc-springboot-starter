@@ -45,7 +45,8 @@
         <!-- 配置需要自动生成的数据库表，tableName 支持 '%'，表示全部生成 -->
         <!-- 自动生成的实体类默认使用 tableName 的驼峰形式作为类名，也可以通过 domainObjectName 指定 -->
         <!-- 关于 table 元素的详细使用请参考：http://mbg.cndocs.ml/configreference/table.html -->
-        <table tableName="sys_user"/>
+        <!--<table tableName="sys_user"/>-->
+        <table tableName="person"/>
 
     </context>
 </generatorConfiguration>

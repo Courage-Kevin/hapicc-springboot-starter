@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hapicc.pojo.HapiccJSONResult;
 import com.hapicc.pojo.JqGridResult;
 import com.hapicc.pojo.SysUser;
-import com.hapicc.services.UserService;
+import com.hapicc.services.mybatis.UserService;
 
 @Slf4j
 @RestController
@@ -34,18 +34,6 @@ public class MyBatisCRUDController {
 
     @PostMapping("user")
     public HapiccJSONResult save(@RequestBody SysUser user) {
-
-        Date now = new Date();
-
-        user.setId(sid.next());
-        user.setPassword(sid.nextShort());
-        if (user.getDateCreated() == null) {
-            user.setDateCreated(now);
-        }
-        if (user.getLastUpdated() == null) {
-            user.setLastUpdated(now);
-        }
-
         try {
             if (userService.save(user) == 1) {
                 return HapiccJSONResult.ok(user);
@@ -54,25 +42,18 @@ public class MyBatisCRUDController {
             }
         } catch (Exception e) {
             log.warn("Error occurred when save user: " + JsonUtils.obj2Json(user), e);
-            return HapiccJSONResult.errorException(e.getMessage());
+            return HapiccJSONResult.errorException("Error occurred when save user!");
         }
     }
 
     @RequestMapping(value = "user/{userId}", method = { RequestMethod.PUT })
     public HapiccJSONResult update(@PathVariable String userId, @RequestBody SysUser user) {
 
-        Date now = new Date();
-
         if (userService.get(userId) == null) {
             return HapiccJSONResult.build(404, "The user not found!", null);
         }
 
-        user.setId(userId);
-        if (user.getLastUpdated() == null) {
-            user.setLastUpdated(now);
-        }
-
-        if (userService.update(user) == 1) {
+        if (userService.update(userId, user) == 1) {
             return HapiccJSONResult.ok(userService.get(userId));
         } else {
             return HapiccJSONResult.build(400, "Failed to update!", null);

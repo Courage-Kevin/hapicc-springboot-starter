@@ -70,6 +70,13 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!-- Spring Boot 整合 Hibernate & JPA -->
+        <!-- 由于 Spring Boot 默认引入了 Hibernate 依赖，此处只需要引入 JPA 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
         <!-- Spring Boot 整合 MyBatis -->
         <!-- MySQL Connector & Druid -->
         <dependency>
@@ -156,7 +163,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- MyBatis Generator -->
+            <!-- MyBatis Generator Maven Plugin -->
             <!-- 运行 `mvn mybatis-generator:generate` 命令，效果与运行 GeneratorTrigger 类相同 -->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
@@ -181,7 +188,7 @@
                 </dependencies>
             </plugin>
 
-            <!-- Flyway -->
+            <!-- Flyway Maven Plugin -->
             <!-- 常用命令：`mvn flyway:migrate` `mvn flyway:info` -->
             <plugin>
                 <groupId>org.flywaydb</groupId>
@@ -198,7 +205,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Liquibase -->
+            <!-- Liquibase Maven Plugin -->
             <!-- 常用命令：`mvn liquibase:update` `mvn liquibase:generateChangeLog` -->
             <plugin>
                 <groupId>org.liquibase</groupId>

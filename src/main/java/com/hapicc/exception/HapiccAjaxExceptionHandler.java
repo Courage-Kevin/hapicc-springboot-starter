@@ -1,4 +1,4 @@
-package com.hapicc.utils.exception;
+package com.hapicc.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
