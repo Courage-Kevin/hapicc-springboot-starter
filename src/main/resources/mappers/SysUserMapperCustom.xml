@@ -18,7 +18,7 @@
         <result column="last_updated" jdbcType="TIMESTAMP" property="lastUpdated"/>
     </resultMap>
 
-    <!-- 创建 root 用户 -->
+    <!-- 查询用户简单信息 -->
     <select id="selectSimpleInfoById"
             parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT id, name, login_name, gender
