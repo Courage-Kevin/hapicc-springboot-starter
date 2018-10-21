@@ -23,6 +23,8 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Note implements Serializable {
 
+    private static final long serialVersionUID = 1360411214759642967L;
+
     // 标注该属性映射为数据库表的主键
     @Id
     // 与 @Id 一同使用，标注主键的生成策略
