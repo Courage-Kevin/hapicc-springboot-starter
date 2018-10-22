@@ -1,10 +1,10 @@
 package com.hapicc.pojo;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "com.cc.opensource")
 @PropertySource("classpath:resource.properties")
 public class Resource {

@@ -1,6 +1,6 @@
 package com.hapicc.controllers.interceptor;
 
-import com.hapicc.constants.LogConstants;
+import com.hapicc.common.constants.LogConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.util.StringUtils;
@@ -21,6 +21,11 @@ public class LogInterceptor implements HandlerInterceptor {
             x_request_id = UUID.randomUUID().toString().replaceAll("-", "");
         }
         MDC.put(LogConstants.X_REQUEST_ID, x_request_id);
+
+        String x_upstream = request.getHeader(LogConstants.X_UPSTREAM);
+        if (!StringUtils.isEmpty(x_upstream)) {
+            MDC.put(LogConstants.X_UPSTREAM, x_upstream);
+        }
 
         String queryString = request.getQueryString() == null ? "" : "?" + request.getQueryString();
         log.info("=== request url: {} {}{}", request.getMethod(), request.getRequestURI(), queryString);

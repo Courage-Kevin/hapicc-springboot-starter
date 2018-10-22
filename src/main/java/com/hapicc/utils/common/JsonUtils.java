@@ -16,8 +16,7 @@ public class JsonUtils {
      */
     public static String obj2Json(Object obj) {
         try {
-            String jsonStr = MAPPER.writeValueAsString(obj);
-            return jsonStr;
+            return MAPPER.writeValueAsString(obj);
         } catch (final JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -29,8 +28,7 @@ public class JsonUtils {
      */
     public static <T> T json2Obj(String jsonStr, Class<T> clazz) {
         try {
-            T t = MAPPER.readValue(jsonStr, clazz);
-            return t;
+            return MAPPER.readValue(jsonStr, clazz);
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -43,8 +41,7 @@ public class JsonUtils {
     public static <T> List<T> json2List(String jsonStr, Class<T> clazz) {
         JavaType javaType = MAPPER.getTypeFactory().constructParametricType(List.class, clazz);
         try {
-            List<T> list = MAPPER.readValue(jsonStr, javaType);
-            return list;
+            return MAPPER.readValue(jsonStr, javaType);
         } catch (final Exception e) {
             e.printStackTrace();
         }
