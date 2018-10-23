@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -22,15 +23,28 @@ public class TestGraphQLController {
     private GraphQLService graphQLService;
 
     @PostMapping("testListEntriesInfo")
-    public HapiccJSONResult testListEntriesInfo(@RequestBody Map<String, String> data) {
+    public HapiccJSONResult testListEntriesInfo(@RequestParam Map<String, String> params, @RequestBody Map<String, String> data) {
         try {
             List<GitHubEntry> entries = graphQLService.listEntriesInfo(
-                    data.get("expression"), data.get("repoName"), data.get("repoOwner")
+                    data.get("expression"), params.get("repoName"), params.get("repoOwner")
             );
             return HapiccJSONResult.ok(Collections.singletonMap("entries", entries));
         } catch (Exception e) {
-            log.warn("Error occurred when list entries info with data: " + JsonUtils.obj2Json(data), e);
-            return HapiccJSONResult.build(400, "Invalid data!");
+            log.warn("Error occurred when list entries info with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            return HapiccJSONResult.build(400, "Invalid data or parameters!");
+        }
+    }
+
+    @PostMapping("testBatchListEntriesInfo")
+    public HapiccJSONResult testBatchListEntriesInfo(@RequestParam Map<String, String> params, @RequestBody Map<String, String> data) {
+        try {
+            Map<String, List<GitHubEntry>> entriesMap = graphQLService.batchListEntriesInfo(
+                    data, params.get("repoName"), params.get("repoOwner")
+            );
+            return HapiccJSONResult.ok(entriesMap);
+        } catch (Exception e) {
+            log.warn("Error occurred when batch list entries info with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            return HapiccJSONResult.build(400, "Invalid data or parameters!");
         }
     }
 
@@ -44,6 +58,23 @@ public class TestGraphQLController {
         } catch (Exception e) {
             log.warn("Error occurred when load file content with params: " + JsonUtils.obj2Json(params), e);
             return HapiccJSONResult.build(400, "Invalid parameters!");
+        }
+    }
+
+    @PostMapping("testBatchLoadFilesContent")
+    public HapiccJSONResult testBatchLoadFilesContent(@RequestParam Map<String, String> params, @RequestBody Map<String, List<String>> data) {
+        try {
+            Map<String, String> oidContentMap = graphQLService.batchLoadFilesContent(
+                    data.get("oids"), params.get("repoName"), params.get("repoOwner")
+            );
+            if (oidContentMap != null && !oidContentMap.isEmpty()) {
+                Gson gson = new Gson();
+                return HapiccJSONResult.ok(oidContentMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> gson.fromJson(entry.getValue(), Object.class))));
+            }
+            return HapiccJSONResult.ok(oidContentMap);
+        } catch (Exception e) {
+            log.warn("Error occurred when batch load files content with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            return HapiccJSONResult.build(400, "Invalid data or parameters!");
         }
     }
 }

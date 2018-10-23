@@ -1,15 +1,17 @@
 package com.hapicc.common.rest.services.github;
 
-import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.hapicc.common.json.JsonUtils;
 import com.hapicc.common.rest.client.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,8 +20,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class GraphQLService {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${github.graphql.server}")
     private String apiServer;
@@ -36,6 +36,7 @@ public class GraphQLService {
      * @return A list. Entries info list.
      */
     public List<GitHubEntry> listEntriesInfo(String expression, String repoName, String repoOwner) {
+        Assert.hasLength(expression, "The expression cannot be empty!");
         return batchListEntriesInfo(Collections.singletonMap("obj", expression), repoName, repoOwner).get("obj");
     }
 
@@ -58,28 +59,24 @@ public class GraphQLService {
         sb.append("} }");
 
         Map<String, List<GitHubEntry>> result = new HashMap<>();
-
         String resp = request(sb.toString().replaceAll("\\s+", " "));
-        try {
-            JsonNode node = mapper.readTree(resp);
-            JsonNode repoNode = node.get("data").get("repository");
-            if (repoNode.isNull()) {
-                log.info("Null repository, resp: " + resp);
-                return result;
-            }
-            Iterator<String> fieldNames = repoNode.fieldNames();
-            while (fieldNames.hasNext()) {
-                String fieldName = fieldNames.next();
-                JsonNode objNode = repoNode.get(fieldName);
-                if (!objNode.isNull()) {
-                    String entriesStr = objNode.get("entries").toString();
-                    JavaType javaType = mapper.getTypeFactory().constructParametricType(List.class, GitHubEntry.class);
-                    result.put(fieldName.substring(1), mapper.readValue(entriesStr, javaType));
+        JsonUtils.jackson().with(mapper -> {
+            try {
+                JsonNode repoNode = parseRepoNode(resp, mapper);
+                if (repoNode == null) return;
+                Iterator<String> fieldNames = repoNode.fieldNames();
+                while (fieldNames.hasNext()) {
+                    String fieldName = fieldNames.next();
+                    JsonNode objNode = repoNode.get(fieldName);
+                    if (!objNode.isNull()) {
+                        String entriesStr = objNode.get("entries").toString();
+                        result.put(fieldName.substring(1), mapper.readValue(entriesStr, new TypeReference<List<GitHubEntry>>() {}));
+                    }
                 }
+            } catch (IOException e) {
+                log.warn("Error occurred when parse resp: " + resp, e);
             }
-        } catch (IOException e) {
-            log.warn("Error occurred when parse resp: " + resp, e);
-        }
+        });
 
         return result;
     }
@@ -93,6 +90,7 @@ public class GraphQLService {
      * @return A string. Content string or null.
      */
     public String loadFileContent(String oid, String repoName, String repoOwner) {
+        Assert.hasLength(oid, "The oid cannot be empty!");
         return batchLoadFilesContent(Collections.singletonList(oid), repoName, repoOwner).get(oid);
     }
 
@@ -109,39 +107,55 @@ public class GraphQLService {
         Assert.hasLength(repoName, "The repoName cannot be empty!");
         Assert.hasLength(repoOwner, "The repoOwner cannot be empty!");
 
+        List<String> oidList = oids.stream().distinct().collect(Collectors.toList());
+
         StringBuilder sb = new StringBuilder("{ repository(name: \"");
         sb.append(repoName).append("\", owner: \"").append(repoOwner).append("\") { ");
-        oids = oids.stream().distinct().collect(Collectors.toList());
-        int count = oids.size();
+        int count = oidList.size();
         for (int i = 0; i < count; i++) {
-            sb.append("_").append(i).append(": object(oid: \"").append(oids.get(i)).append("\") { ... on Blob { text } } ");
+            sb.append("_").append(i).append(": object(oid: \"").append(oidList.get(i)).append("\") { ... on Blob { text } } ");
         }
         sb.append("} }");
 
         Map<String, String> result = new HashMap<>();
-
         String resp = request(sb.toString().replaceAll("\\s+", " "));
-        try {
-            JsonNode node = mapper.readTree(resp);
-            JsonNode repoNode = node.get("data").get("repository");
-            if (repoNode.isNull()) {
-                log.info("Null repository, resp: " + resp);
-                return result;
-            }
-            Iterator<String> fieldNames = repoNode.fieldNames();
-            while (fieldNames.hasNext()) {
-                String fieldName = fieldNames.next();
-                JsonNode objNode = repoNode.get(fieldName);
-                if (!objNode.isNull()) {
-                    String content = objNode.get("text").asText();
-                    result.put(oids.get(Integer.valueOf(fieldName.substring(1))), content);
+        JsonUtils.jackson().with(mapper -> {
+            try {
+                JsonNode repoNode = parseRepoNode(resp, mapper);
+                if (repoNode == null) return;
+                Iterator<String> fieldNames = repoNode.fieldNames();
+                while (fieldNames.hasNext()) {
+                    String fieldName = fieldNames.next();
+                    JsonNode objNode = repoNode.get(fieldName);
+                    if (!objNode.isNull()) {
+                        String content = objNode.get("text").asText();
+                        result.put(oidList.get(Integer.valueOf(fieldName.substring(1))), content);
+                    }
                 }
+            } catch (IOException e) {
+                log.warn("Error occurred when parse resp: " + resp, e);
             }
-        } catch (IOException e) {
-            log.warn("Error occurred when parse resp: " + resp, e);
-        }
+        });
 
         return result;
+    }
+
+    private JsonNode parseRepoNode(String resp, ObjectMapper mapper) throws IOException {
+        if (StringUtils.isEmpty(resp)) {
+            return null;
+        }
+        JsonNode node = mapper.readTree(resp);
+        JsonNode dataNode = node.get("data");
+        if (dataNode.isNull()) {
+            log.info("Null data, resp: " + resp);
+            return null;
+        }
+        JsonNode repoNode = dataNode.get("repository");
+        if (repoNode.isNull()) {
+            log.info("Null repository, resp: " + resp);
+            return null;
+        }
+        return repoNode;
     }
 
     private String request(String queryString) {

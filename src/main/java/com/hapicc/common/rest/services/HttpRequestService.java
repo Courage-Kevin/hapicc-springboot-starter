@@ -1,6 +1,7 @@
 package com.hapicc.common.rest.services;
 
 import com.google.gson.Gson;
+import com.hapicc.common.json.JsonUtils;
 import com.hapicc.common.rest.client.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -87,18 +88,28 @@ public abstract class HttpRequestService {
         return request("DELETE", url, null, urlParams);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T request(String method, String url, Object data, Map<String, Object> urlParams) {
         try {
+            String resp = null;
             switch (method) {
                 case "GET":
-                    return (T) HttpClient.getForObject(prepareUrl(url, urlParams));
+                    resp = HttpClient.getForObject(prepareUrl(url, urlParams));
+                    break;
                 case "POST":
-                    return (T) HttpClient.postForObject(prepareUrl(url, urlParams), data);
+                    resp = HttpClient.postForObject(prepareUrl(url, urlParams), data);
+                    break;
                 case "PUT":
-                    return (T) HttpClient.putForObject(prepareUrl(url, urlParams), data);
+                    resp = HttpClient.putForObject(prepareUrl(url, urlParams), data);
+                    break;
                 case "DELETE":
-                    return (T) HttpClient.deleteForObject(prepareUrl(url, urlParams));
+                    resp = HttpClient.deleteForObject(prepareUrl(url, urlParams));
+                    break;
+                default:
+                    log.warn("Unsupported request method: {}", method);
+                    break;
+            }
+            if (resp != null) {
+                return JsonUtils.jackson().parse(resp);
             }
         } catch (Exception e) {
             log.warn(getWarnMsg(method, url, data, urlParams), e);

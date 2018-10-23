@@ -1,9 +1,9 @@
 package com.hapicc.common.rest.client;
 
-import com.google.gson.Gson;
 import com.hapicc.common.constants.LogConstants;
 import com.hapicc.common.context.ApplicationContextHelper;
-import com.hapicc.common.serializer.MessageSerializer;
+import com.hapicc.common.json.JsonFormatter;
+import com.hapicc.common.json.JsonUtils;
 import com.hapicc.common.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.config.Registry;
@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -43,18 +46,13 @@ public class HttpClient {
 
     private static final RestProperties restProperties;
 
-    private static MessageSerializer serializer;
+    private static final JsonFormatter serializer;
 
     public static String service;
 
     static {
+        serializer = JsonUtils.serializer();
         restProperties = ApplicationContextHelper.getBean("restProperties");
-        try {
-            String serializerClass = MessageSerializer.class.getPackage().getName() + MessageSerializer.SERIALIZER;
-            serializer = (MessageSerializer) Class.forName(serializerClass).newInstance();
-        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            log.error("Load HttpClient failed!", e);
-        }
     }
 
     private static RestTemplate restTemplate = createRestTemplate();
@@ -79,51 +77,49 @@ public class HttpClient {
         return createRestTemplate(true);
     }
 
-    public static Object getForObject(String url, Object... urlVariables) {
+    public static String getForObject(String url, Object... urlVariables) {
         urlVariables = fixVariables(urlVariables);
-        String dataStr = restTemplate.getForObject(url, String.class, urlVariables);
-        return handleDataString(dataStr);
+        return restTemplate.getForObject(url, String.class, urlVariables);
     }
 
-    public static Object postForObject(String url, Object request, Object... urlVariables) {
+    public static String postForObject(String url, Object request, Object... urlVariables) {
+        request = handleRequest(request);
         urlVariables = fixVariables(urlVariables);
-        String dataStr;
         try {
-            dataStr = restTemplate.postForObject(url, handleRequest(request), String.class, urlVariables);
+            return restTemplate.postForObject(url, request, String.class, urlVariables);
         } catch (RestClientException e) {
-            log.info("request body: {}", new Gson().toJson(request));
+            log.info("request body: {}", request);
             throw e;
         }
-        return handleDataString(dataStr);
     }
 
-    public static Object postForBinary(String url, Object request, Object... urlVariables) {
+    public static byte[] postForBinary(String url, Object request, Object... urlVariables) {
         urlVariables = fixVariables(urlVariables);
         return restTemplate.postForObject(url, handleRequest(request), byte[].class, urlVariables);
     }
 
-    public static Object putForObject(String url, Object request, Object... urlVariables) {
+    public static String putForObject(String url, Object request, Object... urlVariables) {
+        request = handleRequest(request);
         urlVariables = fixVariables(urlVariables);
-        HttpEntity<String> entity = new HttpEntity<>(handleRequest(request), createHeaders());
-        ResponseEntity<String> response;
+        HttpEntity entity = new HttpEntity<>(request, createHeaders());
         try {
-            response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class, urlVariables);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class, urlVariables);
+            return response.hasBody() ? response.getBody() : null;
         } catch (RestClientException e) {
-            log.info("request body: {}", new Gson().toJson(request));
+            log.info("request body: {}", request);
             throw e;
         }
-        return handleResponse(response);
     }
 
     public static void delete(String url, Object... urlVariables) {
         restTemplate.delete(url, fixVariables(urlVariables));
     }
 
-    public static Object deleteForObject(String url, Object... urlVariables) {
+    public static String deleteForObject(String url, Object... urlVariables) {
         urlVariables = fixVariables(urlVariables);
         HttpEntity<String> entity = new HttpEntity<>(createHeaders());
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class, urlVariables);
-        return handleResponse(response);
+        return response.hasBody() ? response.getBody() : null;
     }
 
     private static HttpHeaders createHeaders() {
@@ -146,27 +142,6 @@ public class HttpClient {
             }
         }
         return "";
-    }
-
-    private static Object handleResponse(ResponseEntity<String> response) {
-        if (response != null && response.hasBody()) {
-            try {
-                return serializer.parse(response.getBody());
-            } catch (IOException e) {
-                return response.getBody();
-            }
-        }
-        return "";
-    }
-
-    private static Object handleDataString(String dataStr) {
-        if (!StringUtils.isEmpty(dataStr)) {
-            try {
-                return serializer.parse(dataStr);
-            } catch (IOException ignored) {
-            }
-        }
-        return dataStr;
     }
 
     private static Object[] fixVariables(Object... urlVariables) {
@@ -213,7 +188,9 @@ public class HttpClient {
             if (headers.get(LogConstants.X_REQUEST_ID) == null && CommonUtils.isMDCValueNotNull(MDC.get(LogConstants.X_REQUEST_ID))) {
                 headers.add(LogConstants.X_REQUEST_ID, MDC.get(LogConstants.X_REQUEST_ID));
             }
-            headers.add(LogConstants.X_UPSTREAM, service);
+            if (!StringUtils.isEmpty(service)) {
+                headers.add(LogConstants.X_UPSTREAM, service);
+            }
 
             if (restProperties.getRetry().getHosts().contains(request.getURI().getHost())) {
                 return retryTemplate.execute(retryContext -> {
