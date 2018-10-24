@@ -2,7 +2,7 @@ package com.hapicc.common.json;
 
 import java.io.IOException;
 
-public interface JsonFormatter {
+public interface MessageFormatter {
 
     String format(Object object) throws IOException;
 

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.hapicc.common.rest.services.github.GitHubEntry;
 import com.hapicc.common.rest.services.github.GraphQLService;
 import com.hapicc.pojo.HapiccJSONResult;
-import com.hapicc.utils.common.JsonUtils;
+import com.hapicc.utils.json.JacksonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +30,7 @@ public class TestGraphQLController {
             );
             return HapiccJSONResult.ok(Collections.singletonMap("entries", entries));
         } catch (Exception e) {
-            log.warn("Error occurred when list entries info with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            log.warn("Error occurred when list entries info with params: " + JacksonUtils.obj2Json(params) + ", data: " + JacksonUtils.obj2Json(data), e);
             return HapiccJSONResult.build(400, "Invalid data or parameters!");
         }
     }
@@ -43,7 +43,7 @@ public class TestGraphQLController {
             );
             return HapiccJSONResult.ok(entriesMap);
         } catch (Exception e) {
-            log.warn("Error occurred when batch list entries info with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            log.warn("Error occurred when batch list entries info with params: " + JacksonUtils.obj2Json(params) + ", data: " + JacksonUtils.obj2Json(data), e);
             return HapiccJSONResult.build(400, "Invalid data or parameters!");
         }
     }
@@ -56,7 +56,7 @@ public class TestGraphQLController {
             );
             return HapiccJSONResult.ok(Collections.singletonMap("content", new Gson().fromJson(content, Object.class)));
         } catch (Exception e) {
-            log.warn("Error occurred when load file content with params: " + JsonUtils.obj2Json(params), e);
+            log.warn("Error occurred when load file content with params: " + JacksonUtils.obj2Json(params), e);
             return HapiccJSONResult.build(400, "Invalid parameters!");
         }
     }
@@ -73,7 +73,7 @@ public class TestGraphQLController {
             }
             return HapiccJSONResult.ok(oidContentMap);
         } catch (Exception e) {
-            log.warn("Error occurred when batch load files content with params: " + JsonUtils.obj2Json(params) + ", data: " + JsonUtils.obj2Json(data), e);
+            log.warn("Error occurred when batch load files content with params: " + JacksonUtils.obj2Json(params) + ", data: " + JacksonUtils.obj2Json(data), e);
             return HapiccJSONResult.build(400, "Invalid data or parameters!");
         }
     }

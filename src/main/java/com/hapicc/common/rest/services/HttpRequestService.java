@@ -1,9 +1,10 @@
 package com.hapicc.common.rest.services;
 
 import com.google.gson.Gson;
-import com.hapicc.common.json.JsonUtils;
+import com.hapicc.common.json.JsonHelper;
 import com.hapicc.common.rest.client.HttpClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 
 import java.io.UnsupportedEncodingException;
@@ -37,7 +38,7 @@ public abstract class HttpRequestService {
     }
 
     public <T> T get(String url, Map<String, Object> urlParams) {
-        return request("GET", url, null, urlParams);
+        return request(HttpMethod.GET, url, null, urlParams);
     }
 
     public <T> T post(Object data) {
@@ -53,7 +54,7 @@ public abstract class HttpRequestService {
     }
 
     public <T> T post(String url, Object data, Map<String, Object> urlParams) {
-        return request("POST", url, data, urlParams);
+        return request(HttpMethod.POST, url, data, urlParams);
     }
 
     public <T> T put(Object data) {
@@ -69,7 +70,7 @@ public abstract class HttpRequestService {
     }
 
     public <T> T put(String url, Object data, Map<String, Object> urlParams) {
-        return request("PUT", url, data, urlParams);
+        return request(HttpMethod.PUT, url, data, urlParams);
     }
 
     public <T> T delete() {
@@ -85,34 +86,34 @@ public abstract class HttpRequestService {
     }
 
     public <T> T delete(String url, Map<String, Object> urlParams) {
-        return request("DELETE", url, null, urlParams);
+        return request(HttpMethod.DELETE, url, null, urlParams);
     }
 
-    private <T> T request(String method, String url, Object data, Map<String, Object> urlParams) {
+    private <T> T request(HttpMethod method, String url, Object data, Map<String, Object> urlParams) {
         try {
             String resp = null;
             switch (method) {
-                case "GET":
+                case GET:
                     resp = HttpClient.getForObject(prepareUrl(url, urlParams));
                     break;
-                case "POST":
+                case POST:
                     resp = HttpClient.postForObject(prepareUrl(url, urlParams), data);
                     break;
-                case "PUT":
+                case PUT:
                     resp = HttpClient.putForObject(prepareUrl(url, urlParams), data);
                     break;
-                case "DELETE":
+                case DELETE:
                     resp = HttpClient.deleteForObject(prepareUrl(url, urlParams));
                     break;
                 default:
-                    log.warn("Unsupported request method: {}", method);
+                    log.warn("Unsupported request method: {}", method.toString());
                     break;
             }
             if (resp != null) {
-                return JsonUtils.jackson().parse(resp);
+                return JsonHelper.jackson().parse(resp);
             }
         } catch (Exception e) {
-            log.warn(getWarnMsg(method, url, data, urlParams), e);
+            log.warn(getWarnMsg(method.toString(), url, data, urlParams), e);
         }
         return null;
     }

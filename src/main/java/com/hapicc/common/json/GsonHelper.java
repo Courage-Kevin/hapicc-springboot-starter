@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class GsonHelper implements JsonFormatter, JsonParser {
+public class GsonHelper implements MessageFormatter, MessageParser {
 
     private static final Gson gson = new Gson();
 
@@ -23,13 +23,31 @@ public class GsonHelper implements JsonFormatter, JsonParser {
     }
 
     @Override
-    public <T> T parse(String json) throws IOException {
+    public <T> T parse(String json) throws Exception {
         return gson.fromJson(json, new TypeToken<T>() {}.getType());
     }
 
     @Override
-    public <T> T parseBytes(byte[] bytes) throws IOException {
+    public <T> T parse(String json, Class<T> clz) throws Exception {
+        return gson.fromJson(json, clz);
+    }
+
+    @Override
+    public <T> T parseBytes(byte[] bytes) throws Exception {
         return gson.fromJson(new String(bytes, UTF_8), new TypeToken<T>() {}.getType());
+    }
+
+    @Override
+    public <T> T parseBytes(byte[] bytes, Class<T> clz) throws Exception {
+        return gson.fromJson(new String(bytes, UTF_8), clz);
+    }
+
+    public <T> T parse(String json, TypeToken<T> typeToken) throws Exception {
+        return gson.fromJson(json, typeToken.getType());
+    }
+
+    public <T> T parseBytes(byte[] bytes, TypeToken<T> typeToken) throws Exception {
+        return gson.fromJson(new String(bytes, UTF_8), typeToken.getType());
     }
 
     public void with(Consumer<Gson> consumer) {

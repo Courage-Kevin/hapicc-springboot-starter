@@ -2,8 +2,8 @@ package com.hapicc.common.rest.client;
 
 import com.hapicc.common.constants.LogConstants;
 import com.hapicc.common.context.ApplicationContextHelper;
-import com.hapicc.common.json.JsonFormatter;
-import com.hapicc.common.json.JsonUtils;
+import com.hapicc.common.json.MessageFormatter;
+import com.hapicc.common.json.JsonHelper;
 import com.hapicc.common.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.config.Registry;
@@ -46,12 +46,12 @@ public class HttpClient {
 
     private static final RestProperties restProperties;
 
-    private static final JsonFormatter serializer;
+    private static final MessageFormatter serializer;
 
     public static String service;
 
     static {
-        serializer = JsonUtils.serializer();
+        serializer = JsonHelper.serializer();
         restProperties = ApplicationContextHelper.getBean("restProperties");
     }
 

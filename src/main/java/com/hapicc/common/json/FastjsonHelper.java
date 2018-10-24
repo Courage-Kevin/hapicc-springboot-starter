@@ -2,11 +2,10 @@ package com.hapicc.common.json;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 
-public class FastjsonHelper implements JsonFormatter, JsonParser {
+public class FastjsonHelper implements MessageFormatter, MessageParser {
 
     @Override
     public String format(Object object) throws IOException {
@@ -24,7 +23,25 @@ public class FastjsonHelper implements JsonFormatter, JsonParser {
     }
 
     @Override
+    public <T> T parse(String json, Class<T> clz) throws IOException {
+        return JSON.parseObject(json, clz);
+    }
+
+    @Override
     public <T> T parseBytes(byte[] bytes) throws IOException {
-        return JSON.parseObject(bytes, new TypeToken<T>() {}.getType());
+        return JSON.parseObject(bytes, new TypeReference<T>() {}.getType());
+    }
+
+    @Override
+    public <T> T parseBytes(byte[] bytes, Class<T> clz) throws IOException {
+        return JSON.parseObject(bytes, clz);
+    }
+
+    public <T> T parse(String json, TypeReference<T> typeRef) {
+        return JSON.parseObject(json, typeRef);
+    }
+
+    public <T> T parseBytes(byte[] bytes, TypeReference<T> typeRef) {
+        return JSON.parseObject(bytes, typeRef.getType());
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hapicc.pojo.HapiccJSONResult;
-import com.hapicc.utils.common.JsonUtils;
+import com.hapicc.utils.json.JacksonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +45,7 @@ public class TwoInterceptor implements HandlerInterceptor {
         try (OutputStream os = response.getOutputStream()) {
             response.setContentType("text/json");
             response.setCharacterEncoding("UTF-8");
-            os.write(JsonUtils.obj2Json(result).getBytes());
+            os.write(JacksonUtils.obj2Json(result).getBytes());
             os.flush();
         }
     }

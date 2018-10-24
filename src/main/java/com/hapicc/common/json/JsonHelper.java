@@ -1,6 +1,6 @@
 package com.hapicc.common.json;
 
-public class JsonUtils {
+public class JsonHelper {
 
     private static final GsonHelper gsonHelper;
 
@@ -14,11 +14,11 @@ public class JsonUtils {
         fastjsonHelper = new FastjsonHelper();
     }
 
-    public static JsonFormatter serializer() {
+    public static MessageFormatter serializer() {
         return jacksonHelper;
     }
 
-    public static JsonParser deserializer() {
+    public static MessageParser deserializer() {
         return jacksonHelper;
     }
 

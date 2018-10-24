@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.hapicc.common.json.JsonUtils;
+import com.hapicc.common.json.JsonHelper;
 import com.hapicc.common.rest.client.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,7 +60,7 @@ public class GraphQLService {
 
         Map<String, List<GitHubEntry>> result = new HashMap<>();
         String resp = request(sb.toString().replaceAll("\\s+", " "));
-        JsonUtils.jackson().with(mapper -> {
+        JsonHelper.jackson().with(mapper -> {
             try {
                 JsonNode repoNode = parseRepoNode(resp, mapper);
                 if (repoNode == null) return;
@@ -119,7 +119,7 @@ public class GraphQLService {
 
         Map<String, String> result = new HashMap<>();
         String resp = request(sb.toString().replaceAll("\\s+", " "));
-        JsonUtils.jackson().with(mapper -> {
+        JsonHelper.jackson().with(mapper -> {
             try {
                 JsonNode repoNode = parseRepoNode(resp, mapper);
                 if (repoNode == null) return;

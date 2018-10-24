@@ -3,7 +3,7 @@ package com.hapicc.controllers.mybatis;
 import java.util.Date;
 import java.util.Map;
 
-import com.hapicc.utils.common.JsonUtils;
+import com.hapicc.utils.json.JacksonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class MyBatisCRUDController {
                 return HapiccJSONResult.build(400, "Failed to create!", null);
             }
         } catch (Exception e) {
-            log.warn("Error occurred when save user: " + JsonUtils.obj2Json(user), e);
+            log.warn("Error occurred when save user: " + JacksonUtils.obj2Json(user), e);
             return HapiccJSONResult.errorException("Error occurred when save user!");
         }
     }
@@ -92,7 +92,7 @@ public class MyBatisCRUDController {
             JqGridResult ret = userService.list(params);
             return HapiccJSONResult.ok(ret);
         } catch (Exception e) {
-            log.warn("Error occurred when list user with params: " + JsonUtils.obj2Json(params), e);
+            log.warn("Error occurred when list user with params: " + JacksonUtils.obj2Json(params), e);
             return HapiccJSONResult.build(400, "Invalid parameters!", null);
         }
     }

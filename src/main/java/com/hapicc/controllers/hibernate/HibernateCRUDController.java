@@ -3,7 +3,7 @@ package com.hapicc.controllers.hibernate;
 import com.hapicc.pojo.HapiccJSONResult;
 import com.hapicc.pojo.hibernate.Note;
 import com.hapicc.services.hibernate.NoteService;
-import com.hapicc.utils.common.JsonUtils;
+import com.hapicc.utils.json.JacksonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class HibernateCRUDController {
         try {
             return HapiccJSONResult.ok(noteService.save(note));
         } catch (Exception e) {
-            log.warn("Error occurred when save note: " + JsonUtils.obj2Json(note), e);
+            log.warn("Error occurred when save note: " + JacksonUtils.obj2Json(note), e);
             return HapiccJSONResult.errorException("Error occurred when save note!");
         }
     }
@@ -41,7 +41,7 @@ public class HibernateCRUDController {
             BeanUtils.copyProperties(noteDetails, note);
             return HapiccJSONResult.ok(noteService.update(noteId, note));
         } catch (Exception e) {
-            log.warn("Error occurred when update note, noteId: " + noteId + ", noteDetails: " + JsonUtils.obj2Json(noteDetails), e);
+            log.warn("Error occurred when update note, noteId: " + noteId + ", noteDetails: " + JacksonUtils.obj2Json(noteDetails), e);
             return HapiccJSONResult.errorException("Error occurred when update note!");
         }
     }
@@ -74,7 +74,7 @@ public class HibernateCRUDController {
         try {
             return HapiccJSONResult.ok(noteService.list(params));
         } catch (Exception e) {
-            log.warn("Error occurred when list note with params: " + JsonUtils.obj2Json(params), e);
+            log.warn("Error occurred when list note with params: " + JacksonUtils.obj2Json(params), e);
             return HapiccJSONResult.build(400, "Invalid parameters!");
         }
     }

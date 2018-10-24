@@ -1,9 +1,13 @@
 package com.hapicc.controllers.redis;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.gson.reflect.TypeToken;
 import com.hapicc.common.redis.RedisService;
 import com.hapicc.pojo.HapiccJSONResult;
 import com.hapicc.pojo.User;
-import com.hapicc.utils.common.JsonUtils;
+import com.hapicc.utils.json.FastjsonUtils;
+import com.hapicc.utils.json.GsonUtils;
+import com.hapicc.utils.json.JacksonUtils;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -110,37 +114,42 @@ public class TestRedisController {
         String listKey = "test:list:json";
 
         User user1 = createUser("User001");
-        String userJson1 = JsonUtils.obj2Json(user1);
+        String userJson1 = JacksonUtils.obj2Json(user1);
 
         User user2 = createUser("User002");
-        String userJson2 = JsonUtils.obj2Json(user2);
+        String userJson2 = JacksonUtils.obj2Json(user2);
 
         User user3 = createUser("User003");
-        String userJson3 = JsonUtils.obj2Json(user3);
+        String userJson3 = JacksonUtils.obj2Json(user3);
 
         stringRedisTemplate.opsForValue().set(jsonKey, userJson1, 5, TimeUnit.SECONDS);
-        User redisUser = JsonUtils.json2Obj(stringRedisTemplate.opsForValue().get(jsonKey), User.class);
+        User redisUser = JacksonUtils.json2Obj(stringRedisTemplate.opsForValue().get(jsonKey), User.class);
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);
         userList.add(user2);
         userList.add(user3);
-        stringRedisTemplate.opsForValue().set(listJsonKey, JsonUtils.obj2Json(userList), 5, TimeUnit.SECONDS);
-        List<User> redisUserList = JsonUtils.json2List(stringRedisTemplate.opsForValue().get(listJsonKey), User.class);
+        stringRedisTemplate.opsForValue().set(listJsonKey, JacksonUtils.obj2Json(userList), 5, TimeUnit.SECONDS);
+        String userListJson = stringRedisTemplate.opsForValue().get(listJsonKey);
+        List<User> jacksonUserList = JacksonUtils.json2Obj(userListJson, new TypeReference<List<User>>() {});
+        List<User> gsonUserList = GsonUtils.json2Obj(userListJson, new TypeToken<List<User>>() {});
+        List<User> fastjsonUserList = FastjsonUtils.json2Obj(userListJson, new com.alibaba.fastjson.TypeReference<List<User>>() {});
 
         stringRedisTemplate.opsForSet().add(setKey, userJson1, userJson2, userJson3);
         stringRedisTemplate.expire(setKey, 5, TimeUnit.SECONDS);
         Long setSize = stringRedisTemplate.opsForSet().size(setKey);
-        User setPopUser = JsonUtils.json2Obj(stringRedisTemplate.opsForSet().pop(setKey), User.class);
+        User setPopUser = JacksonUtils.json2Obj(stringRedisTemplate.opsForSet().pop(setKey), User.class);
 
         stringRedisTemplate.opsForList().leftPushAll(listKey, userJson1, userJson2, userJson3);
         stringRedisTemplate.expire(listKey, 5, TimeUnit.SECONDS);
         Long listSize = stringRedisTemplate.opsForList().size(listKey);
-        User listLeftPopUser = JsonUtils.json2Obj(stringRedisTemplate.opsForList().leftPop(listKey), User.class);
+        User listLeftPopUser = JacksonUtils.json2Obj(stringRedisTemplate.opsForList().leftPop(listKey), User.class);
 
         Map<String, Object> result = new HashMap<>();
         result.put("redisUser", redisUser);
-        result.put("redisUserList", redisUserList);
+        result.put("jacksonUserList", jacksonUserList);
+        result.put("gsonUserList", gsonUserList);
+        result.put("fastjsonUserList", fastjsonUserList);
         result.put("setSize", setSize);
         result.put("setPopUser", setPopUser);
         result.put("listSize", listSize);
