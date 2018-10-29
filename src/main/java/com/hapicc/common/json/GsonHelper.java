@@ -53,4 +53,8 @@ public class GsonHelper implements MessageFormatter, MessageParser {
     public void with(Consumer<Gson> consumer) {
         consumer.accept(gson);
     }
+
+    public Gson getGson() {
+        return gson;
+    }
 }

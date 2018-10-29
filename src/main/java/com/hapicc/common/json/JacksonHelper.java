@@ -51,4 +51,8 @@ public class JacksonHelper implements MessageFormatter, MessageParser {
     public void with(Consumer<ObjectMapper> consumer) {
         consumer.accept(mapper);
     }
+
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
 }
