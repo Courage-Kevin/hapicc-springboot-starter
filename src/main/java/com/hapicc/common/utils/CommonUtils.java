@@ -1,6 +1,6 @@
 package com.hapicc.common.utils;
 
-import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +29,6 @@ public class CommonUtils {
     }
 
     public static boolean isMDCValueNotNull(String str) {
-        return !StringUtils.isBlank(str) && !str.equalsIgnoreCase("null");
+        return StringUtils.hasText(str) && !str.equalsIgnoreCase("null");
     }
 }

@@ -214,14 +214,20 @@ public class HttpClient {
     }
 
     private static org.apache.http.client.HttpClient httpClient(boolean allTrust) {
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(getSSLContext(allTrust), getHostnameVerifier());
+        PoolingHttpClientConnectionManager connectionManager;
+        if (allTrust) {
+            SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(getAllTrustSSLContext(), getHostnameVerifier());
 
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", socketFactory)
-                .build();
+            Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", PlainConnectionSocketFactory.INSTANCE)
+                    .register("https", socketFactory)
+                    .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+            connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        } else {
+            connectionManager = new PoolingHttpClientConnectionManager();
+        }
+
         connectionManager.setMaxTotal(restProperties.getConnection().getPool().getMaxTotal());
         connectionManager.setDefaultMaxPerRoute(restProperties.getConnection().getPool().getDefaultMaxPerRoute());
 
@@ -232,18 +238,14 @@ public class HttpClient {
         return (s, sslSession) -> true;
     }
 
-    private static SSLContext getSSLContext(boolean allTrust) {
-        if (allTrust) {
-            return SSLContexts.createDefault();
-        } else {
-            try {
-                return SSLContexts.custom()
-                        .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true)
-                        .build();
-            } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-                log.error("Load trust material failed!");
-            }
-            return null;
+    private static SSLContext getAllTrustSSLContext() {
+        try {
+            return SSLContexts.custom()
+                    .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true)
+                    .build();
+        } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+            log.error("Load trust material failed!");
         }
+        return null;
     }
 }

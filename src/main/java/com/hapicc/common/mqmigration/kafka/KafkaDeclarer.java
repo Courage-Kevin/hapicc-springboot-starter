@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 @Component
 public class KafkaDeclarer implements CommandLineRunner {
 
-    @Value("${kafka.bootstrap.servers}")
-    private List<String> kafkaServers;
+    @Value("${kafka.bootstrap.servers:localhost:9092}")
+    private List<String> bootstrapServers;
 
     @Autowired
     private Environment environment;
@@ -57,7 +57,7 @@ public class KafkaDeclarer implements CommandLineRunner {
             log.info("All topics: {}", Stream.of(topics).map(KafkaTopic::getName).collect(Collectors.toList()));
 
             Properties properties = new Properties();
-            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServers);
+            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
             try (AdminClient client = AdminClient.create(properties)) {
                 ListTopicsOptions options = new ListTopicsOptions();
