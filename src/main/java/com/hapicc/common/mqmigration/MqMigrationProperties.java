@@ -74,9 +74,9 @@ public class MqMigrationProperties {
 
         private boolean enable = true;
 
-        private String exchanges = "classpath:migration/mq/rabbit/exchanges.json";
+        private String exchanges = "classpath:migration/mq/rabbitmq/exchanges.json";
 
-        private String queues = "classpath:migration/mq/rabbit/queues.json";
+        private String queues = "classpath:migration/mq/rabbitmq/queues.json";
 
         public boolean isEnable() {
             return enable;

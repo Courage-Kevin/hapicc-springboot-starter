@@ -22,5 +22,14 @@
                 "routingKey": "test_topic"
             }
         ]
+    },
+    {
+        "name": "test_rabbitmq_hello_queue",
+        "bindings": [
+            {
+                "exchange": "test_rabbitmq_hello_exchange",
+                "routingKey": "hello"
+            }
+        ]
     }
 ]

@@ -12,25 +12,24 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
-@Service
 public class KafkaProducerService {
 
     static final String K_UPSTREAM = "upstream";
     static final String K_REQUEST_ID = "requestId";
 
-    @Value("${spring.application.name}")
-    private String serviceName;
+    private static final String K_LOG_LEVEL = "_logLevel_";
 
     @Value("${kafka.disable:false}")
     private boolean kafkaDisable;
@@ -38,15 +37,13 @@ public class KafkaProducerService {
     @Value("${kafka.bootstrap.servers:localhost:9092}")
     private String bootstrapServers;
 
+    private String serviceName;
+
     private MessageFormatter serializer;
 
     private volatile KafkaProducer<String, String> kafkaProducer;
 
     private volatile AtomicBoolean needRestart = new AtomicBoolean(false);
-
-    public KafkaProducerService() {
-        this.serializer = JsonHelper.serializer();
-    }
 
     public KafkaProducerService(String serviceName) {
         this(serviceName, JsonHelper.serializer());
@@ -73,7 +70,7 @@ public class KafkaProducerService {
             data.put(K_REQUEST_ID,
                     CommonUtils.isMDCValueNotNull(MDC.get(LogConstants.X_REQUEST_ID))
                             ? MDC.get(LogConstants.X_REQUEST_ID)
-                            : String.valueOf(System.nanoTime()));
+                            : UUID.randomUUID().toString().replace("-", ""));
         }
 
         CommonUtils.preProcessMap(data);
@@ -82,11 +79,11 @@ public class KafkaProducerService {
         try {
             message = serializer.format(data);
         } catch (IOException e) {
-            log.error("=== Send failed, format message as json failed!", e);
+            log.error("=== Error occurred while formatting message to json!", e);
             return;
         }
 
-        LogUtils.log(log, data.get("_logLevel_"), "=== Send kafka message to topic({}): key: {}, message: {}", topic, String.valueOf(key), message);
+        LogUtils.log(log, data.get(K_LOG_LEVEL), "=== Send kafka message to topic({}): key: {}, message: {}", topic, String.valueOf(key), message);
 
         final String _topic = topic;
         final String _message = message;
@@ -145,6 +142,7 @@ public class KafkaProducerService {
         }
     }
 
+    @PreDestroy
     private void close() {
         if (kafkaDisable || kafkaProducer == null) {
             return;

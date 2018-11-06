@@ -18,7 +18,7 @@ public class LogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String x_request_id = request.getHeader(LogConstants.X_REQUEST_ID);
         if (StringUtils.isEmpty(x_request_id)) {
-            x_request_id = UUID.randomUUID().toString().replaceAll("-", "");
+            x_request_id = UUID.randomUUID().toString().replace("-", "");
         }
         MDC.put(LogConstants.X_REQUEST_ID, x_request_id);
 

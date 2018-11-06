@@ -140,7 +140,7 @@ public class KafkaConsumerTemplate implements Runnable {
             MDC.put(LogConstants.X_REQUEST_ID,
                     message.get(KafkaProducerService.K_REQUEST_ID) != null
                             ? String.valueOf(message.get(KafkaProducerService.K_REQUEST_ID))
-                            : String.valueOf(System.nanoTime()));
+                            : String.valueOf(UUID.randomUUID().toString().replace("-", "")));
 
             log.info("=== The consumer {} in group {} is processing {}", consumerId, groupId, record.key());
 

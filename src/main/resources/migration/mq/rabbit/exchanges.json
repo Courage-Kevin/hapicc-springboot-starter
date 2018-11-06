@@ -10,5 +10,9 @@
     {
         "name": "test_rabbit_migration_topic_exchange",
         "type": "topic"
+    },
+    {
+        "name": "test_rabbitmq_hello_exchange",
+        "type": "topic"
     }
 ]
