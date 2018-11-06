@@ -1,6 +1,6 @@
 [
     {
-        "name": "test-kafka-migration-topic01",
+        "name": "test-kafka-migration-topic",
         "numPartitions": 1,
         "replicationFactor": 1
     },

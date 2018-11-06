@@ -1,0 +1,26 @@
+[
+    {
+        "name": "test_rabbit_migration_direct_queue",
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "bindings": [
+            {
+                "exchange": "test_rabbit_migration_direct_exchange",
+                "routingKey": "test_direct"
+            }
+        ]
+    },
+    {
+        "name": "test_rabbit_migration_topic_queue",
+        "durable": true,
+        "exclusive": false,
+        "autoDelete": false,
+        "bindings": [
+            {
+                "exchange": "test_rabbit_migration_topic_exchange",
+                "routingKey": "test_topic"
+            }
+        ]
+    }
+]

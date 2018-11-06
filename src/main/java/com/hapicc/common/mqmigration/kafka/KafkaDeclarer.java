@@ -3,12 +3,14 @@ package com.hapicc.common.mqmigration.kafka;
 import com.hapicc.common.json.JsonHelper;
 import com.hapicc.common.mqmigration.MqMigrationProperties;
 import com.hapicc.common.mqmigration.SchemaValidator;
-import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.ArrayUtils;
 import org.apache.kafka.clients.admin.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -19,18 +21,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
+@Order(1)
 @Component
 public class KafkaDeclarer implements CommandLineRunner {
 
-    @Value("${kafka.bootstrap.servers:localhost:9092}")
-    private List<String> bootstrapServers;
+    private final Logger log = LoggerFactory.getLogger(KafkaDeclarer.class);
+
+    @Autowired
+    private MqMigrationProperties migrationProperties;
 
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private MqMigrationProperties migrationProperties;
+    @Value("${kafka.bootstrap.servers:localhost:9092}")
+    private List<String> bootstrapServers;
 
     @Autowired
     private SchemaValidator<KafkaTopic> topicValidator;

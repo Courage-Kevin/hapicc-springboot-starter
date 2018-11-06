@@ -1,0 +1,14 @@
+[
+    {
+        "name": "test_rabbit_migration_fanout_exchange",
+        "type": "fanout"
+    },
+    {
+        "name": "test_rabbit_migration_direct_exchange",
+        "type": "direct"
+    },
+    {
+        "name": "test_rabbit_migration_topic_exchange",
+        "type": "topic"
+    }
+]

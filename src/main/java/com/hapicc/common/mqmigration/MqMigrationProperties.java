@@ -9,6 +9,8 @@ public class MqMigrationProperties {
 
     private Kafka kafka = new Kafka();
 
+    private Rabbit rabbit = new Rabbit();
+
     private Profile profile = new Profile();
 
     public Kafka getKafka() {
@@ -17,6 +19,14 @@ public class MqMigrationProperties {
 
     public void setKafka(Kafka kafka) {
         this.kafka = kafka;
+    }
+
+    public Rabbit getRabbit() {
+        return rabbit;
+    }
+
+    public void setRabbit(Rabbit rabbit) {
+        this.rabbit = rabbit;
     }
 
     public Profile getProfile() {
@@ -57,6 +67,39 @@ public class MqMigrationProperties {
 
         public void setReplicationFactor(short replicationFactor) {
             this.replicationFactor = replicationFactor;
+        }
+    }
+
+    public static class Rabbit {
+
+        private boolean enable = true;
+
+        private String exchanges = "classpath:migration/mq/rabbit/exchanges.json";
+
+        private String queues = "classpath:migration/mq/rabbit/queues.json";
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(boolean enable) {
+            this.enable = enable;
+        }
+
+        public String getExchanges() {
+            return exchanges;
+        }
+
+        public void setExchanges(String exchanges) {
+            this.exchanges = exchanges;
+        }
+
+        public String getQueues() {
+            return queues;
+        }
+
+        public void setQueues(String queues) {
+            this.queues = queues;
         }
     }
 
