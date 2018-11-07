@@ -158,6 +158,8 @@ public class KafkaConsumerTemplate implements Runnable {
     }
 
     private void processBatchMessage(ConsumerRecords<String, String> records) throws Exception {
+        if (records.isEmpty()) return;
+
         Map<String, List<Map>> shuffle = new HashMap<>();
         for (ConsumerRecord<String, String> record : records) {
             if (record.value() == null) continue;
@@ -178,7 +180,7 @@ public class KafkaConsumerTemplate implements Runnable {
     }
 
     private boolean shouldProcessMessage(ConsumerRecord record) {
-        String key = String.format("kafka-offset-topic-%s", record.key());
+        String key = String.format("kafka-offset-topic-%s", record.topic());
         String field = String.format("partition-%d", record.partition());
 
         final boolean[] shouldProcess = { false };
