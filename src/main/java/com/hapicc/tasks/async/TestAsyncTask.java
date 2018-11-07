@@ -15,7 +15,7 @@ public class TestAsyncTask {
         Thread.sleep(1000);
         long end = System.currentTimeMillis();
         System.out.println("任务 1 耗时：" + (end - start) + " ms");
-        return new AsyncResult<String>("666");
+        return new AsyncResult<>("666");
     }
 
     @Async
@@ -24,7 +24,7 @@ public class TestAsyncTask {
         Thread.sleep(800);
         long end = System.currentTimeMillis();
         System.out.println("任务 2 耗时：" + (end - start) + " ms");
-        return new AsyncResult<String>("666");
+        return new AsyncResult<>("666");
     }
 
     @Async
@@ -33,6 +33,6 @@ public class TestAsyncTask {
         Thread.sleep(600);
         long end = System.currentTimeMillis();
         System.out.println("任务 3 耗时：" + (end - start) + " ms");
-        return new AsyncResult<String>("666");
+        return new AsyncResult<>("666");
     }
 }
