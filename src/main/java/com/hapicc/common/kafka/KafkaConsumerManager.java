@@ -27,8 +27,6 @@ public abstract class KafkaConsumerManager implements KafkaMessageProcessor {
 
     protected abstract String getBootstrapServers();
 
-    protected abstract RedisService getRedisService();
-
     @Value("${kafka.disable:false}")
     protected boolean kafkaDisable;
 
@@ -76,7 +74,6 @@ public abstract class KafkaConsumerManager implements KafkaMessageProcessor {
         Assert.hasText(getGroupId(), "The groupId cannot be empty!");
         Assert.notNull(getNumConsumers(), "The numConsumers cannot be null!");
         Assert.hasText(getBootstrapServers(), "The bootstrapServers cannot be empty!");
-        Assert.notNull(getRedisService(), "The redisService cannot be null!");
 
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(getGroupId() + "-thread-%d").build();
         executor = Executors.newFixedThreadPool(getNumConsumers(), namedThreadFactory);
@@ -97,8 +94,7 @@ public abstract class KafkaConsumerManager implements KafkaMessageProcessor {
                     pollTimeoutMillis,
                     batchProcess,
                     this,
-                    deserializer,
-                    getRedisService()
+                    deserializer
             );
 
             consumers.add(consumer);

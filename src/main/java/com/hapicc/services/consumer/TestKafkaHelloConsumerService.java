@@ -30,10 +30,6 @@ public class TestKafkaHelloConsumerService extends KafkaConsumerManager {
     @Getter
     String bootstrapServers;
 
-    @Autowired
-    @Getter
-    RedisService redisService;
-
     @Override
     public void processKafkaMessage(String key, Map message) {
         log.info("The value of message field: {}", message.get("message"));

@@ -30,8 +30,6 @@ public class KafkaConsumerTemplate implements Runnable {
 
     private MessageParser deserializer;
 
-    private RedisService redisService;
-
     private KafkaMessageProcessor processor;
 
     KafkaConsumerTemplate(
@@ -45,8 +43,7 @@ public class KafkaConsumerTemplate implements Runnable {
             long pollTimeoutMillis,
             boolean batchProcess,
             KafkaMessageProcessor processor,
-            MessageParser deserializer,
-            RedisService redisService
+            MessageParser deserializer
     ) {
         this.topic = topic;
         this.groupId = groupId;
@@ -59,7 +56,6 @@ public class KafkaConsumerTemplate implements Runnable {
 
         this.processor = processor;
         this.deserializer = deserializer;
-        this.redisService = redisService;
 
         Properties props = new Properties();
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -143,12 +139,7 @@ public class KafkaConsumerTemplate implements Runnable {
                             : String.valueOf(UUID.randomUUID().toString().replace("-", "")));
 
             log.info("=== The consumer {} in group {} is processing {}", consumerId, groupId, record.key());
-
-            if (shouldProcessMessage(record)) {
-                processor.processKafkaMessage(record.key(), message);
-            } else {
-                log.info("=== Skip to process the message since it had been processed, partition: {}, offset: {}", record.partition(), record.offset());
-            }
+            processor.processKafkaMessage(record.key(), message);
         } catch (Exception e) {
             log.error("=== Error occurred while processing kafka message!", e);
         } finally {
@@ -166,39 +157,13 @@ public class KafkaConsumerTemplate implements Runnable {
 
             log.info("=== [batch] The consumer {} in group {} is processing {}", consumerId, groupId, record.key());
 
-            if (shouldProcessMessage(record)) {
-                shuffle.computeIfAbsent(record.key(), k -> new ArrayList<>());
-                shuffle.get(record.key()).add(deserializer.parse(record.value(), Map.class));
-            } else {
-                log.info("=== [batch] Skip to process the message since it had been processed, partition: {}, offset: {}", record.partition(), record.offset());
-            }
+            shuffle.computeIfAbsent(record.key(), k -> new ArrayList<>());
+            shuffle.get(record.key()).add(deserializer.parse(record.value(), Map.class));
         }
 
         if (!shuffle.isEmpty()) {
             processor.processKafkaMessage(null, shuffle);
         }
-    }
-
-    private boolean shouldProcessMessage(ConsumerRecord record) {
-        String key = String.format("kafka-offset-topic-%s", record.topic());
-        String field = String.format("partition-%d", record.partition());
-
-        final boolean[] shouldProcess = { false };
-
-        redisService.withRedis((Jedis jedis) -> {
-            if (jedis.hexists(key, field)) {
-                long previousOffset = Long.parseLong(jedis.hget(key, field));
-                if (record.offset() > previousOffset) {
-                    shouldProcess[0] = true;
-                    jedis.hset(key, field, String.valueOf(record.offset()));
-                }
-            } else {
-                shouldProcess[0] = true;
-                jedis.hset(key, field, String.valueOf(record.offset()));
-            }
-        });
-
-        return shouldProcess[0];
     }
 
     void shutdown() {

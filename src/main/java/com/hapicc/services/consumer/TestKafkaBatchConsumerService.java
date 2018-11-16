@@ -31,10 +31,6 @@ public class TestKafkaBatchConsumerService extends KafkaConsumerManager {
     @Getter
     String bootstrapServers;
 
-    @Autowired
-    @Getter
-    RedisService redisService;
-
     public TestKafkaBatchConsumerService() {
         super(true, 2000, 10);
     }
