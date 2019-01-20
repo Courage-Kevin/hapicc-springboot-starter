@@ -2,13 +2,11 @@ package com.hapicc.common.kafka;
 
 import com.hapicc.common.constants.LogConstants;
 import com.hapicc.common.json.MessageParser;
-import com.hapicc.common.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.MDC;
-import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -136,7 +134,7 @@ public class KafkaConsumerTemplate implements Runnable {
             MDC.put(LogConstants.X_REQUEST_ID,
                     message.get(KafkaProducerService.K_REQUEST_ID) != null
                             ? String.valueOf(message.get(KafkaProducerService.K_REQUEST_ID))
-                            : String.valueOf(UUID.randomUUID().toString().replace("-", "")));
+                            : UUID.randomUUID().toString().replace("-", ""));
 
             log.info("=== The consumer {} in group {} is processing {}", consumerId, groupId, record.key());
             processor.processKafkaMessage(record.key(), message);
